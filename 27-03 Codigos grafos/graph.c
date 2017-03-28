@@ -76,7 +76,7 @@ void addEdge(graph_t *graph, int src, int dest)
     graph->adjListArr[src].head = newNode;
     graph->adjListArr[src].num_members++;
 
-    if(graph->type == UNDIRECTED)
+    if(graph->type == NAO_DIRECIONADO)
     {
         /* Add an edge from dest to src also*/
         newNode = createNode(src);
@@ -105,7 +105,7 @@ void displayGraph(graph_p graph)
 
 int main()
 {
-    graph_p undir_graph = createGraph(6, UNDIRECTED);
+    graph_p undir_graph = createGraph(6, NAO_DIRECIONADO);
     graph_p dir_graph = createGraph(5, DIRECTED);
     addEdge(undir_graph, 0, 1);
     addEdge(undir_graph, 0, 4);
@@ -124,7 +124,7 @@ int main()
     addEdge(dir_graph, 2, 3);
     addEdge(dir_graph, 3, 4);
 
-    printf("\nUNDIRECTED GRAPH");
+    printf("\n ----- Grafo: Não Direcionado ----- \n");
     displayGraph(undir_graph);
     destroyGraph(undir_graph);
 

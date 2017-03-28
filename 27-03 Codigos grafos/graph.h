@@ -1,8 +1,10 @@
 /*graph.h*/
+/* Biblioteca de grafos no formato de uma lista de adjacencia*/
 #ifndef _GRAPH_H_
 #define _GRAPH_H_
 
-typedef enum {UNDIRECTED=0,DIRECTED} graph_type_e;
+// Declara o tipo de grafo.
+typedef enum {NAO_DIRECIONADO=0,DIRECTED} graph_type_e;
 
 /* Adjacency list node*/
 typedef struct adjlist_node
