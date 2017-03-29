@@ -3,7 +3,8 @@
 #ifndef _GRAPH_H_
 #define _GRAPH_H_
 
-// Declara o tipo de grafo.
+/* Declara o tipo de grafo.
+uma lista de coisas Inf:https://pt.wikibooks.org/wiki/Programar_em_C/Enumeração;8 */
 typedef enum {NAO_DIRECIONADO=0,DIRECTED} graph_type_e;
 
 /* Adjacency list node*/
@@ -20,13 +21,13 @@ typedef struct adjlist
     adjlist_node_t *head;      /*head of the adjacency linked list*/
 }adjlist_t, *adjlist_p;
 
-/* Graph structure. A graph is an array of adjacency lists.
-   Size of array will be number of vertices in graph*/
+/* Estrutura do grafo. Um grafo está em uam verto de Lista de adjacencia.
+   O tamanho do verto é o numero numero de vertices no grafos*/
 typedef struct graph
 {
-    graph_type_e type;        /*Directed or undirected graph */
-    int num_vertices;         /*Number of vertices*/
-    adjlist_p adjListArr;     /*Adjacency lists' array*/
+    graph_type_e type;        /*Tipo de grafos: Direcionado ou Não Direcionado */
+    int num_vertices;         /*Número de vertices (E)*/
+    adjlist_p adjListArr;     /*Lista de adjacências*/
 }graph_t, *graph_p;
 
 /* Exit function to handle fatal errors*/
