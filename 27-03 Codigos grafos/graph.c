@@ -91,7 +91,6 @@ void destroyGraph(graph_p graph)
         }
         /*Free the graph*/
         free(graph);
-        printf("%.1d ", graph->adj_matrix[1][1]);
     }
 }
 
