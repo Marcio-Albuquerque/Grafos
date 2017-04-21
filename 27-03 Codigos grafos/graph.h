@@ -5,7 +5,7 @@
 
 /* Declara o tipo de grafo.
 uma lista de coisas Inf:https://pt.wikibooks.org/wiki/Programar_em_C/Enumeração;8 */
-typedef enum {NAO_DIRECIONADO=0,DIRECTED} graph_type_e;
+typedef enum {NAO_DIRECIONADO=0, DIRECIONADO} graph_type_e;
 
 /* Adjacency list node*/
 typedef struct adjlist_node
@@ -28,13 +28,14 @@ typedef struct graph
     graph_type_e type;        /*Tipo de grafos: Direcionado ou Não Direcionado */
     int num_vertices;         /*Número de vertices (E)*/
     adjlist_p adjListArr;     /*Lista de adjacências*/
+    int** adj_matrix;
 }graph_t, *graph_p;
 
 /* Exit function to handle fatal errors*/
-__inline void err_exit(char* msg)
-{
-    printf("[Fatal Error]: %s \nExiting...\n", msg);
-    exit(1);
-}
+//__inline void err_exit(char* msg)
+//{
+  //  printf("[Fatal Error]: %s \nExiting...\n", msg);
+//    exit(1);
+//}
 
 #endif
