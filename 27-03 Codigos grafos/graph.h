@@ -23,19 +23,28 @@ typedef struct adjlist
 
 /* Estrutura do grafo. Um grafo está em uam verto de Lista de adjacencia.
    O tamanho do verto é o numero numero de vertices no grafos*/
-typedef struct graph
+typedef struct adjlistgraph
 {
     graph_type_e type;        /*Tipo de grafos: Direcionado ou Não Direcionado */
     int num_vertices;         /*Número de vertices (E)*/
     adjlist_p adjListArr;     /*Lista de adjacências*/
-    int** adj_matrix;
-}graph_t, *graph_p;
 
-/* Exit function to handle fatal errors*/
-//__inline void err_exit(char* msg)
-//{
-  //  printf("[Fatal Error]: %s \nExiting...\n", msg);
-//    exit(1);
-//}
+}adjlistgraph_t, *adjlistgraph_p;
+
+typedef struct adjmatgraph
+{
+    graph_type_e type;        /*Tipo de grafos: Direcionado ou Não Direcionado */
+    int num_vertices;         /*Número de vertices (E)*/
+    int** adj_matrix;         /*Matriz da adjacencia*/
+
+}adjmatgraph_t, *adjmatgraph_p;
+
+typedef struct incmatgraph
+{
+    graph_type_e type;        /*Tipo de grafos: Direcionado ou Não Direcionado */
+    int num_vertices;         /*Número de vertices (E)*/
+    int** inc_matrix;         /*Matriz da incidencia*/
+
+}incmatgraph_t, *incmatgraph_p;
 
 #endif

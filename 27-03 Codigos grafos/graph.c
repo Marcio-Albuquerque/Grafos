@@ -3,18 +3,320 @@
 #include <stdlib.h>
 #include "graph.h"
 
-
-#define MAX 20
+/* - - -  VARIAVEIS GLOBAIS  - - - */
 
 //Criar o vetor de visitado.
-int visited[MAX];
+//int numEdgeInc = 0;
+int visitedAdjList[20];
 
-/* Function to create an adjacency list node*/
-adjlist_node_p createNode(int v)
+/* - - - FUNÇÕES DE MALLOC PARA LISTA ADJACENCIA,
+          MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA  - - - */
+
+// Função para criar um nó na adjacencia lista //
+adjlist_node_p createNode(int v);
+
+// Função para alocar e criar o grafo de lista de adjacencia //
+adjlistgraph_p createAdjListGraph(int n, graph_type_e type);
+
+// Função para alocar e criar o grafo de matriz de adjacencia //
+adjmatgraph_p createAdjMatGraph(int n, graph_type_e type);
+
+/* - - -  FUNÇÕES DE PREENCHIMENTO PARA LISTA ADJACENCIA,
+          MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA - - - */
+
+// Adiciona uma aresta a um grafo de lista de adjacencia//
+void addEdgeAdjList(adjlistgraph_t *graph, int ini, int dest);
+
+// Adiciona uma aresta a um grafo de matriz de adjacencia//
+void addEdgeAdjMat(adjmatgraph_t *graph, int ini, int dest);
+
+/* - - -  FUNÇÕES DE IMPRIMIR PARA LISTA ADJACENCIA,
+          MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA  - - - */
+
+//Função para imprimir a lista de adjacência do grafo//
+void displayGraphAdjList(adjlistgraph_p graph);
+
+//Imprimi a matriz de adjacencia do grafo
+void displayMatrixGraph(adjmatgraph_p graph);
+
+/* - - - FUNÇÕES DE LIBERA MEMORIA DAS LISTA ADJACENCIA,
+        MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA - - - */
+
+//Destrói o Grafo//
+void destroyGraphAdjList(adjlistgraph_p graph);
+
+/* - - - FUNÇÕES DE BUSCA EM PROFUNDIDADE DAS LISTA ADJACENCIA,
+          MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA - - - */
+
+//Busca em profundidade para lista de adjacencia
+void DFSAdjList(adjlistgraph_p graph, int i);
+
+/* - - - FUNÇÕES PARA VERIFICAR AS CONEXOES DO GRAFO - - - */
+
+//Checando a conexão dos vertices//
+int checkConnectionGraphAdjList(adjlistgraph_p graph);
+
+
+
+/*graphi_p createGraphIncidenceM(graph_p graph, int edge){
+  graphi_p graphi = (graphi_p)malloc(sizeof(graphi_t));
+
+  graphi->in_matrix = (int **) malloc (sizeof(int **)*(graph->num_vertices*edge));
+
+  int r,c;
+  for (r = 0; r < graph->num_vertices; r++) {
+      graphi->in_matrix[r] = (int *) malloc(sizeof(int)*graph->num_vertices);
+      if(!graphi->in_matrix[r]) {
+        printf ("Fatal error in memory allocation!");
+      }
+   }
+
+   for (r = 0; r < graph->num_vertices; r++) {
+      for (c = 0; c < edge; c++) {
+              graphi->in_matrix[r][c] = 0;
+
+          }
+   }
+   printf(" - ---  %.1d\n", graphi->in_matrix[5][7] );
+
+   return graphi;
+} */
+
+
+
+int main()
 {
+  int n, t, r, c = 0, in, de, ch=0, vet;
+
+  printf("- - - - - Programa para criar um grafo: Ant. Marcio - - - - - \n \n \n");
+//int am[5][5];
+  while (1) { //Leitura e verificação do numero de vertices.
+    printf("Entre com o numero de vertices:\n--> ");
+    scanf("%d", &n);
+    if (n > 1) {
+      break;
+    }
+    else
+    {
+      printf("\n\nAletar: Zero, Um ou numero negativos nao seram aceitos. \n\n");
+    }
+  }
+
+  while (1) { //Leitura e verificação do numero de vertices.
+    printf("\nEscolha qual o tipo de grafo:\n ");
+    printf("1 - Nao Direcionado;\n ");
+    printf("2 - Direcionado.\n--> ");
+    scanf("%d", &t);
+    if (t > 0 && t < 3) {
+      break;
+    }
+    else
+    {
+      printf("\n\nAletar: Numero invalido. \n\n");
+    }
+  }
+
+  while (1) { //Leitura e verificação do numero de vertices.
+    printf("\nEscolha qual o tipo de grafo:\n ");
+    printf("1 - Lista de Adjacencia;\n ");
+    printf("2 - Matriz de Adjacencia;\n ");
+    printf("3 - Matriz de Incidencia.\n--> ");
+    scanf("%d", &r);
+    if (r > 0 && r < 4) {
+      break;
+    }
+    else
+    {
+      printf("\n\nAletar: Numero invalido. \n\n");
+    }
+  }
+
+  //Vai executar o que foi escolhido.
+  if (t ==1){
+    if (r==1){
+      adjlistgraph_p undir_graph = createAdjListGraph(n, NAO_DIRECIONADO);
+
+      while(1){
+        printf("\nFormato de par de nos: <V1> <V2> \n");
+        printf("Inserir par de nos:\n-->");
+        //Para limpar o buffer em Windows e Linux
+        fflush(stdin);//Windows
+        //__fpurge(stdin); //Linux
+        scanf ("%d %d", &in, &de);
+
+        if (in > -1 && in < n && de > - 1 && de < n){
+	             addEdgeAdjList(undir_graph, in, de);
+ 	       printf ("\nConexao (NAO DIRECIONADA) entre %d para %d\n", in, de);
+
+ 	     }else{
+         printf ("\nAVISO: Conexao INVALIDA entre %d para %d\n", in, de);
+       }
+
+        printf("\nAviso para funcao Inserir:\n ");
+        printf("1 - Para CONTINUAR na funcao;\n ");
+        printf("2 - Para SAIR da funcao. \n--> ");
+        scanf("%d", &ch);
+
+        if(ch == 2){
+          break;
+        }
+      }
+
+      displayGraphAdjList(undir_graph);
+
+      printf("\n \n- - - Busca em profundidade - - -\n \n");
+
+      while(1){
+        printf("\nQual vertices deseja inicia a busca ?\n--> ");
+        scanf("%d", &vet);
+        if (vet > - 1 && vet < n) {
+          DFSAdjList(undir_graph, vet);
+          break;
+        }else{
+          printf("\n\nAletar: Numero invalido. \n\n");
+        }
+      }
+      printf("\n \n- - - Checar as conexoes - - -\n \n");
+
+      if (checkConnectionGraphAdjList( undir_graph )){
+        printf("Grafo e conexo");
+      }else {printf(" Grafo nao e conexo");}
+
+      destroyGraphAdjList(undir_graph);
+    }
+    else
+    {// Parte do código para grafos nao direcionados
+      if(r==2){ // Não Direcionado e matriz de adjacencia
+        printf("2");
+        adjmatgraph_p undir_graph = createAdjMatGraph(n, NAO_DIRECIONADO);
+
+        while(1){
+          printf("\nFormato de par de nos: <V1> <V2> \n");
+          printf("Inserir par de nos:\n-->");
+          //Para limpar o buffer em Windows e Linux
+          fflush(stdin);//Windows
+          //__fpurge(stdin); //Linux
+          scanf ("%d %d", &in, &de);
+
+          if (in > -1 && in < n && de > - 1 && de < n){
+                 addEdgeAdjMat(undir_graph, in, de);
+           printf ("\nConexao (NAO DIRECIONADA) entre %d para %d\n", in, de);
+
+         }else{
+           printf ("\nAVISO: Conexao INVALIDA entre %d para %d\n", in, de);
+         }
+
+          printf("\nAviso para funcao Inserir:\n ");
+          printf("1 - Para CONTINUAR na funcao;\n ");
+          printf("2 - Para SAIR da funcao. \n--> ");
+          scanf("%d", &ch);
+
+          if(ch == 2){
+            break;
+          }
+        }
+
+        displayMatrixGraph(undir_graph);
+
+        //GOTO: LIBERA MEMORIA DA MATRIZ DE ADJACENCIA
+        //GOTO: BUSCA EM PROFUNDIDADE
+
+      }else{
+        printf("3");
+          //GOTO: IMPLEMENTA A MATRIZ DE INCIDENCIA
+      }
+  }
+
+}else{ // Parte do código para grafos direcionados
+  if (r==1){ // Direcionado e lista de adjacencia
+
+    adjlistgraph_p dir_graph = createAdjListGraph(n, DIRECIONADO);
+
+    while(1){
+      printf("\nFormato de par de nos: <V1> <V2> \n");
+      printf("Inserir par de nos:\n-->");
+      //Para limpar o buffer em Windows e Linux
+      fflush(stdin);//Windows
+      //__fpurge(stdin); //Linux
+      scanf ("%d %d", &in, &de);
+
+      if (in > -1 && in < n && de > - 1 && de < n){
+             addEdgeAdjList(dir_graph, in, de);
+       printf ("\nConexao (DIRECIONADA) entre %d para %d\n", in, de);
+
+     }else{
+       printf ("\nAVISO: Conexao INVALIDA entre %d para %d\n", in, de);
+     }
+
+      printf("\nAviso para funcao Inserir:\n ");
+      printf("1 - Para CONTINUAR na funcao;\n ");
+      printf("2 - Para SAIR da funcao. \n--> ");
+      scanf("%d", &ch);
+
+      if(ch == 2){
+        break;
+      }
+    }
+
+    displayGraphAdjList(dir_graph);
+
+    //GOTO: BUSCA em PROFUNDIDADE ainda implimentando.
+
+    destroyGraphAdjList(dir_graph);
+
+  }else{// Parte do código para grafos direcionados
+    if(r==2){//Direcionado e matriz de adjacencia
+
+      adjmatgraph_p undir_graph = createAdjMatGraph(n, DIRECIONADO);
+
+      while(1){
+        printf("\nFormato de par de nos: <V1> <V2> \n");
+        printf("Inserir par de nos:\n-->");
+        //Para limpar o buffer em Windows e Linux
+        fflush(stdin);//Windows
+        //__fpurge(stdin); //Linux
+        scanf ("%d %d", &in, &de);
+
+        if (in > -1 && in < n && de > - 1 && de < n){
+               addEdgeAdjMat(undir_graph, in, de);
+         printf ("\nConexao (DIRECIONADA) entre %d para %d\n", in, de);
+
+       }else{
+         printf ("\nAVISO: Conexao INVALIDA entre %d para %d\n", in, de);
+       }
+
+        printf("\nAviso para funcao Inserir:\n ");
+        printf("1 - Para CONTINUAR na funcao;\n ");
+        printf("2 - Para SAIR da funcao. \n--> ");
+        scanf("%d", &ch);
+
+        if(ch == 2){
+          break;
+        }
+      }
+
+      displayMatrixGraph(undir_graph);
+
+      //GOTO: LIBERA MEMORIA DA MATRIZ DE ADJACENCIA
+      //GOTO: BUSCA EM PROFUNDIDADE
+    }else{
+      printf("3");
+      //GOTO: IMPLEMENTA A MATRIZ DE INCIDENCIA
+    }
+  }
+  }
+    return 0;
+}
+
+
+//// FUNÇÕES DE MALLOC PARA LISTA ADJACENCIA, MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA ////
+
+// Função para criar um nó na adjacencia lista //
+adjlist_node_p createNode(int v){
     adjlist_node_p newNode = (adjlist_node_p)malloc(sizeof(adjlist_node_t));
-    //if(!newNode)
-        //err_exit("Unable to allocate memory for new node");
+
+    if(!newNode){
+        printf("\n \n Aviso: Falhar na alocacao de memoria \n  \n");}
 
     newNode->vertex = v;
     newNode->next = NULL;
@@ -22,42 +324,22 @@ adjlist_node_p createNode(int v)
     return newNode;
 }
 
-/* Function to create a graph with n vertices; Creates both directed and undirected graphs*/
-graph_p createGraph(int n, graph_type_e type)
-{
+//Função da lista de adjacencia.
+adjlistgraph_p createAdjListGraph(int n, graph_type_e type){
     int i;
-    graph_p graph = (graph_p)malloc(sizeof(graph_t));
-    //if(!graph)
-      //  err_exit("Unable to allocate memory for graph");
+    adjlistgraph_p graph = (adjlistgraph_p)malloc(sizeof(adjlistgraph_t));
+    if(!graph){
+        printf("\n \n Aviso: Falhar na alocacao de memoria \n  \n");
+    }
+
     graph->num_vertices = n;
     graph->type = type;
 
-    graph->adj_matrix = (int **) malloc (sizeof(int **)*graph->num_vertices);
-
-    //Alocando memoria para matriz da adjacencia.
-    if(!graph->adj_matrix) {
-        printf ("Fatal error in memory allocation!");
-    }
-
-    int r, c;
-    for (r = 0; r < graph->num_vertices; r++) {
-        graph->adj_matrix[r] = (int *) malloc(sizeof(int)*graph->num_vertices);
-        if(!graph->adj_matrix[r]) {
-          printf ("Fatal error in memory allocation!");
-        }
-     }
-
-     for (r = 0; r < graph->num_vertices; r++) {
-        for (c = 0; c < graph->num_vertices; c++) {
-              graph->adj_matrix[r][c] = 0;
-            }
-     }
-
     /* Create an array of adjacency lists*/
     graph->adjListArr = (adjlist_p)malloc(n * sizeof(adjlist_t));
-    //if(!graph->adjListArr)
-        //err_exit("Unable to allocate memory for adjacency list array");
-
+    if(!graph->adjListArr){
+          printf("\n \n Aviso: Falhar na alocacao de memoria \n  \n");
+      }
     for(i = 0; i < n; i++)
     {
         graph->adjListArr[i].head = NULL;
@@ -67,120 +349,73 @@ graph_p createGraph(int n, graph_type_e type)
     return graph;
 }
 
-/*Destroys the graph*/
-void destroyGraph(graph_p graph)
-{
-    if(graph)
-    {
-        if(graph->adjListArr)
-        {
-            int v;
-            /*Free up the nodes*/
-            for (v = 0; v < graph->num_vertices; v++)
-            {
-                adjlist_node_p adjListPtr = graph->adjListArr[v].head;
-                while (adjListPtr)
-                {
-                    adjlist_node_p tmp = adjListPtr;
-                    adjListPtr = adjListPtr->next;
-                    free(tmp);
-                }
-            }
-            /*Free the adjacency list array*/
-            free(graph->adjListArr);
-        }
-        /*Free the graph*/
-        free(graph);
+//Função da matriz de adjacencia.
+adjmatgraph_p createAdjMatGraph(int n, graph_type_e type){
+  int i;
+  adjmatgraph_p graph = (adjmatgraph_p)malloc(sizeof(adjmatgraph_t));
+  if(!graph){
+      printf("\n \n Aviso: Falhar na alocacao de memoria \n  \n");
+  }
+
+  graph->num_vertices = n;
+  graph->type = type;
+
+  graph->adj_matrix = (int **) malloc (sizeof(int **)*graph->num_vertices);
+
+  //Alocando memoria para matriz da adjacencia.
+  if(!graph->adj_matrix) {
+      printf("\n \n Aviso: Falhar na alocacao de memoria \n  \n");
+  }
+  int r, c;
+  for (r = 0; r < graph->num_vertices; r++) {
+    graph->adj_matrix[r] = (int *) malloc(sizeof(int)*graph->num_vertices);
+    if(!graph->adj_matrix[r]) {
+      printf ("Fatal error in memory allocation!");
     }
+  }
+
+  for (r = 0; r < graph->num_vertices; r++) {
+    for (c = 0; c < graph->num_vertices; c++) {
+      graph->adj_matrix[r][c] = 0;
+    }
+  }
+
+  return graph;
 }
 
-/* Adds an edge to a graph*/
-void addEdge(graph_t *graph, int src, int dest)
-{
-    graph->adj_matrix[src][dest] = 1;
-    printf("%.1d ", graph->adj_matrix[src][dest]);
 
-    /* Add an edge from src to dst in the adjacency list*/
+//// FUNÇÕES DE PREENCHIMENTO PARA LISTA ADJACENCIA, MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA ////
+// Adiciona uma aresta a um grafo de lista de adjacencia//
+void addEdgeAdjList(adjlistgraph_t *graph, int ini, int dest){
+
+    // Adicionar uma aresta de ini para dest na lista de adjacência//
     adjlist_node_p newNode = createNode(dest);
-    newNode->next = graph->adjListArr[src].head;
-    graph->adjListArr[src].head = newNode;
-    graph->adjListArr[src].num_members++;
+    newNode->next = graph->adjListArr[ini].head;
+    graph->adjListArr[ini].head = newNode;
+    graph->adjListArr[ini].num_members++;
 
     if(graph->type == NAO_DIRECIONADO)
     {
-        graph->adj_matrix[dest][src] = 1;
-        newNode = createNode(src);
+        newNode = createNode(ini);
         newNode->next = graph->adjListArr[dest].head;
         graph->adjListArr[dest].head = newNode;
         graph->adjListArr[dest].num_members++;
     }
 }
 
-//Usando busca em profundidade para visitar os vertices;
-void DFS(graph_p graph, int i){
-  adjlist_node_p adjListPtr = graph->adjListArr[i].head;
-  printf("\nVertice visitado : %d \n",i);
-  visited[i]=1;
-  while (adjListPtr!=NULL) {
-    i = adjListPtr->vertex;
-    if(!visited[i]){
-      DFS(graph, i);
-      }
-      adjListPtr = adjListPtr->next;
-    }
+// Adiciona uma aresta a um grafo de matriz de adjacencia//
+void addEdgeAdjMat(adjmatgraph_t *graph, int ini, int dest){
+  // Adicionar uma aresta de ini para dest na matriz de adjacência//
+  graph->adj_matrix[ini][dest] = 1;
+  if (graph->type == NAO_DIRECIONADO) {
+    graph->adj_matrix[dest][ini] = 1;
+  }
 }
 
-//Checando a conexão dos vertices;
-int checkconnectionGraph(graph_p graph){
-  int i, bool;
-  for (i = 0; i < graph->num_vertices; i++){
-    if (visited[i] == 1){
-      bool = 1;
-    }else {
-      bool = 0;
-    }
-  }
-  return bool;
-}
+//// FUNÇÕES DE IMPRIMIR PARA LISTA ADJACENCIA, MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA ////
 
-
-  /*int i;
-  int vetor[graph->num_vertices] ;
-  for (i = 0; i < graph->num_vertices; i++)
-  {
-      vetor[i] = 0; // Munda a vida para ver como a vinda é.
-
-      printf("\n%d Vertices Atual: ", i);
-      while (adjListPtr)
-      {
-          printf("%d->", adjListPtr->vertex);
-
-          if (adjListPtr->vertex == i)// Diz que tem um laço no proprio Vertice
-          {
-            vetor[i] = vetor[i] - 1; // adiconar decrementra essa ligação.
-          }
-          else
-          {
-            vetor[i] = vetor[i] + 1;
-          }
-
-          adjListPtr = adjListPtr->next;
-      }
-      printf("NULL\n");
-  }
-  //Ainda pensando na vida.
-  for (i = 0; i < graph->num_vertices; i++)
-  {
-      printf("\n \n print %d", vetor[i]);
-  }*/
-
-
-
-
-
-/* Function to print the adjacency list of graph*/
-void displayGraph(graph_p graph)
-{
+//Função para imprimir a lista de adjacência do grafo//
+void displayGraphAdjList(adjlistgraph_p graph){
     int i;
     for (i = 0; i < graph->num_vertices; i++)
     {
@@ -195,9 +430,8 @@ void displayGraph(graph_p graph)
     }
 }
 
-//Imprimi a matriz de adjacencia;
-void displayMatrixGraph(graph_p graph)
-{
+//Imprimi a matriz de adjacencia do grafo
+void displayMatrixGraph(adjmatgraph_p graph){
   printf("\n\n- - - - Matriz de Adjacencia - - - -\n \n");
  	   printf("   ");
      int r, c;
@@ -218,41 +452,57 @@ void displayMatrixGraph(graph_p graph)
  	   }
 }
 
-int main()
-{
-    graph_p undir_graph = createGraph(6, NAO_DIRECIONADO);
-    graph_p dir_graph = createGraph(5, DIRECIONADO);
-    //addEdge(undir_graph, 0, 1);
-    addEdge(undir_graph, 0, 4);
-    addEdge(undir_graph, 1, 2);
-    addEdge(undir_graph, 1, 3);
-    addEdge(undir_graph, 1, 4);
-    addEdge(undir_graph, 2, 3);
-    addEdge(undir_graph, 3, 4);
-    //addEdge(undir_graph, 1, 5);
-    addEdge(undir_graph, 5, 5);
+//// FUNÇÕES DE LIBERA MEMORIA DAS LISTA ADJACENCIA, MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA ////
 
+//Destrói o Grafo//
+void destroyGraphAdjList(adjlistgraph_p graph){
+    if(graph){
+        if(graph->adjListArr){
+            int v;
+            //Limpa da memoria o nó
+            for (v = 0; v < graph->num_vertices; v++){
+                adjlist_node_p adjListPtr = graph->adjListArr[v].head;
+                while (adjListPtr){
+                    adjlist_node_p tmp = adjListPtr;
+                    adjListPtr = adjListPtr->next;
+                    free(tmp);
+                }
+            }
+            //Limpa da memoria a de lista de adjacência
+            free(graph->adjListArr);
+        }
+        //Limpa da memoria o grafo
+        free(graph);
+    }
+}
+/* - - -  FUNÇÕES ADICIONAIS PARA LISTA ADJACENCIA,
+          MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA  - - - */
 
-//    addEdge(dir_graph, 0, 1);
-//    addEdge(dir_graph, 0, 4);
-//    addEdge(dir_graph, 1, 2);
-//    addEdge(dir_graph, 1, 3);
-//    addEdge(dir_graph, 1, 4);
-//    addEdge(dir_graph, 2, 3);
-//    addEdge(dir_graph, 3, 4);
+//Função para imprimir a lista de adjacência do grafo//
+void DFSAdjList(adjlistgraph_p graph, int i){
+  adjlist_node_p adjListPtr = graph->adjListArr[i].head;
+  printf("\nVertice visitado : %d \n",i);
+  visitedAdjList[i]=1;
+  while (adjListPtr!=NULL){
+    i = adjListPtr->vertex;
+    if(!visitedAdjList[i]){
+      DFSAdjList(graph, i);
+      }
+      adjListPtr = adjListPtr->next;
+    }
+}
 
-    printf("\n ----- Grafo: Nao Direcionado ----- \n");
-    displayGraph(undir_graph);
-    displayMatrixGraph(undir_graph);
-    DFS(undir_graph, 0);
-    if (checkconnectionGraph( undir_graph )){
-      printf(" \nGrafo e conexo");
-    }else {printf(" \nGrafo nao e conexo");}
-    destroyGraph(undir_graph);
+/* - - - FUNÇÕES PARA VERIFICAR AS CONEXOES DO GRAFO - - - */
 
-//    printf("\nDIRECTED GRAPH");
-//    displayGraph(dir_graph);
-//    destroyGraph(dir_graph);
-
-    return 0;
+//Checando a conexão dos vertices//
+int checkConnectionGraphAdjList(adjlistgraph_p graph){
+  int i, bool;
+  for (i = 0; i < graph->num_vertices; i++){
+    if (visitedAdjList[i] == 1){
+      bool = 1;
+    }else {
+      bool = 0;
+    }
+  }
+  return bool;
 }
