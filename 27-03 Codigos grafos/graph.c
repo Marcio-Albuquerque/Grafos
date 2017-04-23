@@ -45,6 +45,8 @@ void displayMatrixGraph(adjmatgraph_p graph);
 //Destrói o Grafo//
 void destroyGraphAdjList(adjlistgraph_p graph);
 
+void destroyGraphAdjMat(adjmatgraph_p graph);
+
 /* - - - FUNÇÕES DE BUSCA EM PROFUNDIDADE DAS LISTA ADJACENCIA,
           MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA - - - */
 
@@ -187,7 +189,6 @@ int main()
     else
     {// Parte do código para grafos nao direcionados
       if(r==2){ // Não Direcionado e matriz de adjacencia
-        printf("2");
         adjmatgraph_p undir_graph = createAdjMatGraph(n, NAO_DIRECIONADO);
 
         while(1){
@@ -217,8 +218,8 @@ int main()
         }
 
         displayMatrixGraph(undir_graph);
-
         //GOTO: LIBERA MEMORIA DA MATRIZ DE ADJACENCIA
+        destroyGraphAdjMat(undir_graph);
         //GOTO: BUSCA EM PROFUNDIDADE
 
       }else{
@@ -267,7 +268,7 @@ int main()
   }else{// Parte do código para grafos direcionados
     if(r==2){//Direcionado e matriz de adjacencia
 
-      adjmatgraph_p undir_graph = createAdjMatGraph(n, DIRECIONADO);
+      adjmatgraph_p dir_graph = createAdjMatGraph(n, DIRECIONADO);
 
       while(1){
         printf("\nFormato de par de nos: <V1> <V2> \n");
@@ -278,7 +279,7 @@ int main()
         scanf ("%d %d", &in, &de);
 
         if (in > -1 && in < n && de > - 1 && de < n){
-               addEdgeAdjMat(undir_graph, in, de);
+               addEdgeAdjMat(dir_graph, in, de);
          printf ("\nConexao (DIRECIONADA) entre %d para %d\n", in, de);
 
        }else{
@@ -295,9 +296,9 @@ int main()
         }
       }
 
-      displayMatrixGraph(undir_graph);
-
+      displayMatrixGraph(dir_graph);
       //GOTO: LIBERA MEMORIA DA MATRIZ DE ADJACENCIA
+      destroyGraphAdjMat(dir_graph);
       //GOTO: BUSCA EM PROFUNDIDADE
     }else{
       printf("3");
@@ -474,6 +475,15 @@ void destroyGraphAdjList(adjlistgraph_p graph){
         //Limpa da memoria o grafo
         free(graph);
     }
+}
+//Destrói o Grafo de matriz de adjacencia//
+void destroyGraphAdjMat(adjmatgraph_p graph){
+  int i;
+  for (i = 0; i < graph->num_vertices; i++) {
+      int* currentIntPtr = graph->adj_matrix[i];
+      free(currentIntPtr);
+  }
+  free(graph);
 }
 /* - - -  FUNÇÕES ADICIONAIS PARA LISTA ADJACENCIA,
           MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA  - - - */
