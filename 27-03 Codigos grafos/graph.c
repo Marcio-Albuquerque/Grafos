@@ -6,8 +6,7 @@
 /* - - -  VARIAVEIS GLOBAIS  - - - */
 
 //Criar o vetor de visitado.
-//int numEdgeInc = 0;
-int visitedAdjList[20];
+int visitedAdjList[20], k=0;
 
 /* - - - FUNÇÕES DE MALLOC PARA LISTA ADJACENCIA,
           MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA  - - - */
@@ -20,6 +19,10 @@ adjlistgraph_p createAdjListGraph(int n, graph_type_e type);
 
 // Função para alocar e criar o grafo de matriz de adjacencia //
 adjmatgraph_p createAdjMatGraph(int n, graph_type_e type);
+
+// Função para alocar e criar o grafo de matriz de incidencia e adiciona a aresta
+incmatgraph_p createIncMatGraphAddEdge(int n, graph_type_e type, int ini, int dest);
+incmatgraph_p recreateIncMatGraphAddEdge(incmatgraph_p graph, int s, int ini, int dest);
 
 /* - - -  FUNÇÕES DE PREENCHIMENTO PARA LISTA ADJACENCIA,
           MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA - - - */
@@ -38,6 +41,9 @@ void displayGraphAdjList(adjlistgraph_p graph);
 
 //Imprimi a matriz de adjacencia do grafo
 void displayMatrixGraph(adjmatgraph_p graph);
+
+//Imprimi a matriz de incidencia do grafo
+void displayIncMatGraph(incmatgraph_p graph);
 
 /* - - - FUNÇÕES DE LIBERA MEMORIA DAS LISTA ADJACENCIA,
         MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA - - - */
@@ -59,39 +65,12 @@ void DFSAdjList(adjlistgraph_p graph, int i);
 int checkConnectionGraphAdjList(adjlistgraph_p graph);
 
 
-
-/*graphi_p createGraphIncidenceM(graph_p graph, int edge){
-  graphi_p graphi = (graphi_p)malloc(sizeof(graphi_t));
-
-  graphi->in_matrix = (int **) malloc (sizeof(int **)*(graph->num_vertices*edge));
-
-  int r,c;
-  for (r = 0; r < graph->num_vertices; r++) {
-      graphi->in_matrix[r] = (int *) malloc(sizeof(int)*graph->num_vertices);
-      if(!graphi->in_matrix[r]) {
-        printf ("Fatal error in memory allocation!");
-      }
-   }
-
-   for (r = 0; r < graph->num_vertices; r++) {
-      for (c = 0; c < edge; c++) {
-              graphi->in_matrix[r][c] = 0;
-
-          }
-   }
-   printf(" - ---  %.1d\n", graphi->in_matrix[5][7] );
-
-   return graphi;
-} */
-
-
-
 int main()
 {
   int n, t, r, c = 0, in, de, ch=0, vet;
 
   printf("- - - - - Programa para criar um grafo: Ant. Marcio - - - - - \n \n \n");
-//int am[5][5];
+
   while (1) { //Leitura e verificação do numero de vertices.
     printf("Entre com o numero de vertices:\n--> ");
     scanf("%d", &n);
@@ -218,13 +197,46 @@ int main()
         }
 
         displayMatrixGraph(undir_graph);
-        //GOTO: LIBERA MEMORIA DA MATRIZ DE ADJACENCIA
+        //TODO: BUSCA EM PROFUNDIDADE
         destroyGraphAdjMat(undir_graph);
-        //GOTO: BUSCA EM PROFUNDIDADE
 
-      }else{
-        printf("3");
-          //GOTO: IMPLEMENTA A MATRIZ DE INCIDENCIA
+
+      }else{//Não Direcionado e Matriz de Incidencia
+        int sizeEdge = 0; //Um contador
+        incmatgraph_p undir_graph;
+        while(1){
+          printf("\nFormato de par de nos: <V1> <V2> \n");
+          printf("Inserir par de nos:\n-->");
+          //Para limpar o buffer em Windows e Linux
+          fflush(stdin);//Windows
+          //__fpurge(stdin); //Linux
+          scanf ("%d %d", &in, &de);
+
+          if (in > -1 && in < n && de > - 1 && de < n){
+            sizeEdge++; //Erro a undir_graph ir sempre se sobescrever verificar verifcar sizeEdge se é maior do que um se não ele cria o undir_graph caso contrario atualizar a versão, com a versão anterior
+            if(sizeEdge == 1){
+              undir_graph = createIncMatGraphAddEdge(n, NAO_DIRECIONADO, in, de);
+            }else{
+              // Atualiza a matriz
+              undir_graph = recreateIncMatGraphAddEdge(undir_graph, sizeEdge, in, de);
+            }
+            printf ("\nConexao (NAO DIRECIONADA) entre %d para %d, para a Aresta: %d\n", in, de, sizeEdge);
+          }else{
+            printf ("\nAVISO: Conexao INVALIDA entre %d para %d, para a Aresta: %d \n", in, de, NULL);
+          }
+
+          printf("\nAviso para funcao Inserir:\n ");
+          printf("1 - Para CONTINUAR na funcao;\n ");
+          printf("2 - Para SAIR da funcao. \n--> ");
+          scanf("%d", &ch);
+
+          if(ch == 2){
+            undir_graph->sizeEdge= sizeEdge;
+            break;
+          }
+        }
+        displayIncMatGraph(undir_graph);
+
       }
   }
 
@@ -260,8 +272,6 @@ int main()
     }
 
     displayGraphAdjList(dir_graph);
-
-    //GOTO: BUSCA em PROFUNDIDADE ainda implimentando.
 
     destroyGraphAdjList(dir_graph);
 
@@ -352,7 +362,7 @@ adjlistgraph_p createAdjListGraph(int n, graph_type_e type){
 
 //Função da matriz de adjacencia.
 adjmatgraph_p createAdjMatGraph(int n, graph_type_e type){
-  int i;
+
   adjmatgraph_p graph = (adjmatgraph_p)malloc(sizeof(adjmatgraph_t));
   if(!graph){
       printf("\n \n Aviso: Falhar na alocacao de memoria \n  \n");
@@ -371,7 +381,7 @@ adjmatgraph_p createAdjMatGraph(int n, graph_type_e type){
   for (r = 0; r < graph->num_vertices; r++) {
     graph->adj_matrix[r] = (int *) malloc(sizeof(int)*graph->num_vertices);
     if(!graph->adj_matrix[r]) {
-      printf ("Fatal error in memory allocation!");
+      printf("\n \n Aviso: Falhar na alocacao de memoria \n  \n");
     }
   }
 
@@ -381,6 +391,77 @@ adjmatgraph_p createAdjMatGraph(int n, graph_type_e type){
     }
   }
 
+  return graph;
+}
+
+// Função para alocar e criar o grafo de matriz de incidencia e adiciona a aresta
+incmatgraph_p createIncMatGraphAddEdge(int n, graph_type_e type, int ini, int dest){
+
+  incmatgraph_p graph = (incmatgraph_p)malloc(sizeof(incmatgraph_t));
+
+  if(!graph){
+      printf("\n \n Aviso: Falhar na alocacao de memoria \n  \n");
+  }
+
+  graph->num_vertices = n;
+  graph->type = type;
+
+  graph->conjEdge = (int*)malloc(sizeof(int*)*2);
+
+  if(!graph->conjEdge) {
+    printf("\n \n Aviso: Falhar na alocacao de memoria \n  \n");
+  }
+
+  graph->inc_matrix = (int **)malloc(sizeof(int **)*(graph->num_vertices));
+
+  int r,c;
+  for (r = 0; r < graph->num_vertices; r++) {
+      graph->inc_matrix[r] = (int *) malloc(sizeof(int)*graph->num_vertices);
+      if(!graph->inc_matrix[r]) {
+        printf("\n \n Aviso: Falhar na alocacao de memoria \n  \n");
+      }
+   }
+
+
+   for (r = 0; r < graph->num_vertices; r++) {
+      for (c = 0; c < 1; c++) {
+              graph->inc_matrix[r][c] = 0;
+
+          }
+   }
+
+    graph->conjEdge[0] = ini;
+    graph->conjEdge[1] = dest;
+
+    graph->inc_matrix[ini][0] = 1;
+
+    if(graph->type == NAO_DIRECIONADO){
+      graph->inc_matrix[dest][0] = 1;
+    }
+  return graph;
+}
+
+//Função para realocar a estrutura de incidencia;
+incmatgraph_p recreateIncMatGraphAddEdge(incmatgraph_p graph, int s, int ini, int dest){
+
+  graph->conjEdge = realloc(graph->conjEdge, sizeof(int*)*(s*2));
+
+  graph->inc_matrix = realloc( graph->inc_matrix , sizeof(int **)*graph->num_vertices*s );
+
+  int r;
+  for (r = 0; r < graph->num_vertices; r++) {//colocar o valor zero nas funções
+         graph->inc_matrix[r][s-1] = 0;
+  }
+
+    graph->conjEdge[s + k] = ini;
+    graph->conjEdge[s + (k+1)] = dest;
+    k++;
+
+  graph->inc_matrix[ini][s-1] = 1;
+
+  if(graph->type == NAO_DIRECIONADO){
+    graph->inc_matrix[dest][s-1] = 1;
+  }
   return graph;
 }
 
@@ -439,7 +520,7 @@ void displayMatrixGraph(adjmatgraph_p graph){
  	   for (c = 0; c < graph->num_vertices; c++) {
  	     printf("%.1d ", c);
     }
- 	   printf("\n");
+ 	  printf("\n");
     for (c = 0; c < graph->num_vertices; c++) {
  	     printf("---");
  	   }
@@ -451,6 +532,32 @@ void displayMatrixGraph(adjmatgraph_p graph){
  	     }
  	     printf("\n");
  	   }
+}
+
+//Imprimi a matriz de incidencia do grafo
+void displayIncMatGraph(incmatgraph_p graph){
+  printf("\n\n- - - - Matriz de Incidencia - - - -\n \n");
+ 	   printf("   ");
+     int r, c,x =0 , y=0;
+ 	   for (c = 0; c < graph->sizeEdge ; c++) {
+
+ 	     printf("%.1d/%.1d ", graph->conjEdge[(c*2)], graph->conjEdge[((2*c)+1)]);
+    }
+
+    printf("\n");
+    for (c = 0; c < graph->sizeEdge; c++) {
+        printf("-----");
+      }
+
+    printf("\n");
+    for (r = 0; r < graph->num_vertices; r++) {
+      printf("%.1d| ", r);
+      for (c = 0; c <  graph->sizeEdge; c++) {
+          printf("%.1d   ", graph->inc_matrix[r][c]);
+      }
+      printf("\n");
+    }
+
 }
 
 //// FUNÇÕES DE LIBERA MEMORIA DAS LISTA ADJACENCIA, MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA ////
