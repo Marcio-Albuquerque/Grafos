@@ -312,12 +312,46 @@ int main()
       }
 
       displayMatrixGraph(dir_graph);
-      //GOTO: LIBERA MEMORIA DA MATRIZ DE ADJACENCIA
       destroyGraphAdjMat(dir_graph);
       //GOTO: BUSCA EM PROFUNDIDADE
     }else{
-      printf("3");
-      //GOTO: IMPLEMENTA A MATRIZ DE INCIDENCIA
+      //Não Direcionado e Matriz de Incidencia
+        int sizeEdge = 0; //Um contador
+        incmatgraph_p dir_graph;
+        while(1){
+          printf("\nFormato de par de nos: <V1> <V2> \n");
+          printf("Inserir par de nos:\n-->");
+          //Para limpar o buffer em Windows e Linux
+          fflush(stdin);//Windows
+          //__fpurge(stdin); //Linux
+          scanf ("%d %d", &in, &de);
+
+          if (in > -1 && in < n && de > - 1 && de < n){
+            sizeEdge++; //Erro a undir_graph ir sempre se sobescrever verificar verifcar sizeEdge se é maior do que um se não ele cria o undir_graph caso contrario atualizar a versão, com a versão anterior
+            if(sizeEdge == 1){
+              dir_graph = createIncMatGraphAddEdge(n, DIRECIONADO, in, de);
+            }else{
+              // Atualiza a matriz
+              dir_graph = recreateIncMatGraphAddEdge(dir_graph, sizeEdge, in, de);
+            }
+            printf ("\nConexao (DIRECIONADA) entre %d para %d, para a Aresta: %d\n", in, de, sizeEdge);
+          }else{
+            printf ("\nAVISO: Conexao INVALIDA entre %d para %d, para a Aresta: %d \n", in, de, NULL);
+          }
+
+          printf("\nAviso para funcao Inserir:\n ");
+          printf("1 - Para CONTINUAR na funcao;\n ");
+          printf("2 - Para SAIR da funcao. \n--> ");
+          scanf("%d", &ch);
+
+          if(ch == 2){
+            dir_graph->sizeEdge= sizeEdge;
+            break;
+          }
+        }
+        displayIncMatGraph(dir_graph);
+        destroyGraphIncMat(dir_graph);
+
     }
   }
   }
@@ -601,21 +635,12 @@ void destroyGraphAdjMat(adjmatgraph_p graph){
 //Destrói o Grafo de Matriz de incidencia//
 void destroyGraphIncMat(incmatgraph_p graph){
   int i;
-  printf("-> %.1d   \n ", graph->inc_matrix[0][0]);
   for (i = 0; i < graph->num_vertices; i++) {
       int* currentIntPtr = graph->inc_matrix[i];
       free(currentIntPtr);
   }
-  printf("->%.1d   \n", graph->inc_matrix[0][0]);
-
-
-
-
-  printf("%.1d/%.1d ", graph->conjEdge[0], graph->conjEdge[1]);
-  printf("->%.1d   \n", graph->inc_matrix[0][0]);
-
   free(graph);
-  printf("%.1d/%.1d \n ", graph->conjEdge[0], graph->conjEdge[1]);
+
 }
 /* - - -  FUNÇÕES ADICIONAIS PARA LISTA ADJACENCIA,
           MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA  - - - */
