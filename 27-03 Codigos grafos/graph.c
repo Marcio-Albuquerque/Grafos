@@ -48,10 +48,14 @@ void displayIncMatGraph(incmatgraph_p graph);
 /* - - - FUNÇÕES DE LIBERA MEMORIA DAS LISTA ADJACENCIA,
         MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA - - - */
 
-//Destrói o Grafo//
+//Destrói o Grafo de Lista de Adjacencia//
 void destroyGraphAdjList(adjlistgraph_p graph);
 
+//Destrói o Grafo de Matriz de Adjacencia//
 void destroyGraphAdjMat(adjmatgraph_p graph);
+
+//Destrói o Grafo de Matriz de incidencia//
+void destroyGraphIncMat(incmatgraph_p graph);
 
 /* - - - FUNÇÕES DE BUSCA EM PROFUNDIDADE DAS LISTA ADJACENCIA,
           MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA - - - */
@@ -236,6 +240,7 @@ int main()
           }
         }
         displayIncMatGraph(undir_graph);
+        destroyGraphIncMat(undir_graph);
 
       }
   }
@@ -591,6 +596,26 @@ void destroyGraphAdjMat(adjmatgraph_p graph){
       free(currentIntPtr);
   }
   free(graph);
+}
+
+//Destrói o Grafo de Matriz de incidencia//
+void destroyGraphIncMat(incmatgraph_p graph){
+  int i;
+  printf("-> %.1d   \n ", graph->inc_matrix[0][0]);
+  for (i = 0; i < graph->num_vertices; i++) {
+      int* currentIntPtr = graph->inc_matrix[i];
+      free(currentIntPtr);
+  }
+  printf("->%.1d   \n", graph->inc_matrix[0][0]);
+
+
+
+
+  printf("%.1d/%.1d ", graph->conjEdge[0], graph->conjEdge[1]);
+  printf("->%.1d   \n", graph->inc_matrix[0][0]);
+
+  free(graph);
+  printf("%.1d/%.1d \n ", graph->conjEdge[0], graph->conjEdge[1]);
 }
 /* - - -  FUNÇÕES ADICIONAIS PARA LISTA ADJACENCIA,
           MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA  - - - */
