@@ -41,11 +41,12 @@ typedef struct adjmatgraph
 
 typedef struct incmatgraph
 {
-    int* conjEdge;           /*Conjunto de vetores*/
+    int* conjEdge;            /*Conjunto de vetores (usei só para imprimir)*/
     int sizeEdge;
     graph_type_e type;        /*Tipo de grafos: Direcionado ou Não Direcionado */
     int num_vertices;         /*Número de vertices (E)*/
     int** inc_matrix;         /*Matriz da incidencia*/
+    int* degree;
 
 }incmatgraph_t, *incmatgraph_p;
 
