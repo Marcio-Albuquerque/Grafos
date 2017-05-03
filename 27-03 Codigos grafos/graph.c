@@ -79,6 +79,9 @@ int checkConnectionGraphAdjMat(adjmatgraph_p graph);
 
 int checkConnectionGraphIncMat(incmatgraph_p graph);
 
+//Conta os números de aresta
+void edgecalAdjList(adjlistgraph_p graph);
+
 
 // Conta e encontra todas as componentes conexas de um grafo: Para Lista de Adjacencia, Matriz Adjacencia, Matriz incidencia.
 struct cc{//Salva os numeros de conexões e qual grupo pertence
@@ -91,6 +94,9 @@ void connectedComponentsGraphAdjList(adjlistgraph_p graph);
 void connectedComponentsGraphAdjMat(adjmatgraph_p graph);
 
 void connectedComponentsGraphIncMat(incmatgraph_p graph);
+
+//Verifica grafo: Completo, uma arvore, um grafo desconexo ou nenhuma das opções anteriores
+void verifyGraph(adjlistgraph_p graph);
 
 
 
@@ -216,6 +222,8 @@ int main()
         }
 
         connectedComponentsGraphAdjList(undir_graph);
+
+        verifyGraph(undir_graph);
 
       destroyGraphAdjList(undir_graph);
     }
@@ -660,18 +668,20 @@ void addEdgeAdjMat(adjmatgraph_t *graph, int ini, int dest){
 
 //Função para imprimir a lista de adjacência do grafo//
 void displayGraphAdjList(adjlistgraph_p graph){
-    int i;
+    int i, e=0;
     for (i = 0; i < graph->num_vertices; i++)
     {
         adjlist_node_p adjListPtr = graph->adjListArr[i].head;
         printf("\n%d: ", i);
         while (adjListPtr)
         {
+            e++;
             printf("%d->", adjListPtr->vertex);
             adjListPtr = adjListPtr->next;
         }
         printf("NULL\n");
     }
+    graph->num_edges = e/2;
 }
 
 //Imprimi a matriz de adjacencia do grafo
@@ -876,9 +886,9 @@ void connectedComponentsGraphAdjList(adjlistgraph_p graph){
 
     printf("\nO numero de componentes conexas do grafo: %d\n \n" , cc_t.num_con);
 
-    for( int i = 0 ; i < graph->num_vertices ; i++ ){
-        printf("Vertice: %d - Grupo: %d\n", i, cc_t.team_vertex[i]);
-      }
+    //for( int i = 0 ; i < graph->num_vertices ; i++ ){
+        //printf("Vertice: %d - Grupo: %d\n", i, cc_t.team_vertex[i]);
+      //}
 }
 
 void connectedComponentsGraphAdjMat(adjmatgraph_p graph){
@@ -920,4 +930,32 @@ void connectedComponentsGraphIncMat(incmatgraph_p graph){
     //for( int i = 0 ; i < graph->num_vertices ; i++ ){
     //    printf("Vertice: %d - Grupo: %d\n", i, cc_t.team_vertex[i]);
     //  }
+}
+
+
+void verifyGraph(adjlistgraph_p graph){
+int i;
+      printf("\n - - - Terceira da Lista - - - \n \n");
+  if( graph->num_edges ==  graph->num_vertices*(graph->num_vertices-1)/2 )  {
+      printf("\n Grafo Completo \n \n");
+  }else{
+      if ( graph->num_edges ==  (graph->num_vertices-1)) {
+        printf("\n Grafo e uma Arvore \n \n");
+      }else{
+
+        for(i=0;i<graph->num_vertices;i++){
+          visitedAdjList[i]=0;
+        }
+
+        DFSAdjList(graph,0, 0);
+
+        if (checkConnectionGraphAdjList(graph)){
+          printf(" Grafo nao e Completo, nem um arvore e nem desconexo\n \n");
+        }else {
+          printf(" Grafo desconexo\n \n");
+        }
+
+      }
+  }
+
 }

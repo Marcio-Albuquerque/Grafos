@@ -26,7 +26,8 @@ typedef struct adjlist
 typedef struct adjlistgraph
 {
     graph_type_e type;        /*Tipo de grafos: Direcionado ou Não Direcionado */
-    int num_vertices;         /*Número de vertices (E)*/
+    int num_vertices;         /*Número de vertices (V)*/
+    int num_edges;            /*Número de aresta (E)*/
     adjlist_p adjListArr;     /*Lista de adjacências*/
 
 }adjlistgraph_t, *adjlistgraph_p;
