@@ -3,11 +3,8 @@
 #include <stdlib.h>
 #include "graph.h"
 
-
 /* - - -  VARIAVEIS GLOBAIS  - - - */
-
-//Criar o vetor de visitado.
-int visitedAdjList[20], visitedAdjMat[20], visitedIncMat[20], k=0 ;
+int k=0;
 
 /* - - - FUNÇÕES DE MALLOC PARA LISTA ADJACENCIA,
           MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA  - - - */
@@ -57,48 +54,6 @@ void destroyGraphAdjMat(adjmatgraph_p graph);
 
 //Destrói o Grafo de Matriz de incidencia//
 void destroyGraphIncMat(incmatgraph_p graph);
-
-/* - - - FUNÇÕES DE BUSCA EM PROFUNDIDADE DAS LISTA ADJACENCIA,
-          MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA - - - */
-
-//Busca em profundidade para lista de adjacencia
-void DFSAdjList(adjlistgraph_p graph, int i, int teamCC);
-
-//Busca em profundidade para matriz de adjacencia
-void DFSAdjMat(adjmatgraph_p graph, int i, int teamCC);
-
-//Busca em profundidade para matriz de incidencia
-void DFSIncMat(incmatgraph_p graph, int i, int teamCC);
-
-/* - - - FUNÇÕES PARA VERIFICAR AS CONEXOES DO GRAFO - - - */
-
-//Checando a conexão dos vertices: Para Lista de Adjacencia, Matriz de Adjacencia, Matriz de incidencia//
-int checkConnectionGraphAdjList(adjlistgraph_p graph);
-
-int checkConnectionGraphAdjMat(adjmatgraph_p graph);
-
-int checkConnectionGraphIncMat(incmatgraph_p graph);
-
-//Conta os números de aresta
-void edgecalAdjList(adjlistgraph_p graph);
-
-
-// Conta e encontra todas as componentes conexas de um grafo: Para Lista de Adjacencia, Matriz Adjacencia, Matriz incidencia.
-struct cc{//Salva os numeros de conexões e qual grupo pertence
-    int num_con;
-    int team_vertex[20]; //Vetor com numero de vertices
-}cc_t;
-
-void connectedComponentsGraphAdjList(adjlistgraph_p graph);
-
-void connectedComponentsGraphAdjMat(adjmatgraph_p graph);
-
-void connectedComponentsGraphIncMat(incmatgraph_p graph);
-
-//Verifica grafo: Completo, uma arvore, um grafo desconexo ou nenhuma das opções anteriores
-void verifyGraph(adjlistgraph_p graph);
-
-
 
 int main()
 {   printf("     /\\---/\\     **************************************    _.._..,_,_\n");
@@ -155,7 +110,8 @@ int main()
   //Vai executar o que foi escolhido.
   if (t ==1){// Nao Direcionado
     if (r==1){ // Não Direcionado e Lista de adjacencia
-      adjlistgraph_p undir_graph = createAdjListGraph(n, NAO_DIRECIONADO);
+      
+	    adjlistgraph_p undir_graph = createAdjListGraph(n, NAO_DIRECIONADO);
 
       while(1){
         printf("\nFormato de par de nos: <V1> <V2> \n");
@@ -184,48 +140,8 @@ int main()
       }
 
       displayGraphAdjList(undir_graph);
-
-      printf("\n \n- - - Busca em profundidade - - -\n \n");
-
-
-      while(1){
-        printf("\nQual vertices deseja inicia a busca ?\n--> ");
-        scanf("%d", &vet);
-        if (vet > - 1 && vet < n) {
-
-          int i; //Zera o vetor
-          for(i=0;i<n;i++){
-            visitedAdjList[i]=0;
-          }
-
-          DFSAdjList(undir_graph, vet, 0);
-          break;
-        }else{
-          printf("\n\nAletar: Numero invalido. \n\n");
-        }
-      }
-      printf("\n \n- - - Checar as conexoes - - -\n \n");
-
-
-
-      if (checkConnectionGraphAdjList(undir_graph)){
-        printf("Grafo e conexo");
-      }else {
-        printf(" Grafo nao e conexo\n \n");
-      }
-
-        printf("\n \n- - - Numero de conexoes - - -\n \n");
-
-        int i; //Zera o vetor
-        for(i=0;i<n;i++){
-          visitedAdjList[i]=0;
-        }
-
-        connectedComponentsGraphAdjList(undir_graph);
-
-        verifyGraph(undir_graph);
-
       destroyGraphAdjList(undir_graph);
+	    
     }
     else
     {// Parte do código para grafos nao direcionados
@@ -259,39 +175,6 @@ int main()
         }
 
         displayMatrixGraph(undir_graph);
-
-        printf("\n \n- - - Busca em profundidade - - -\n \n");
-        int i;
-        for(i=0;i<n;i++){
-          visitedAdjMat[i]=0;}
-        while(1){
-          printf("\nQual vertices deseja inicia a busca ?\n--> ");
-          scanf("%d", &vet);
-          if (vet > - 1 && vet < n) {
-
-            int i; //Zera o vetor
-            for(i=0;i<n;i++){
-              visitedAdjMat[i]=0;
-            }
-
-            DFSAdjMat(undir_graph, vet, 0);
-            break;
-          }else{
-            printf("\n\nAletar: Numero invalido. \n\n");
-          }
-        }
-
-        if (checkConnectionGraphAdjMat( undir_graph )){
-          printf("\n\nGrafo e conexo \n \n");
-        }else {printf("\n\nGrafo nao e conexo \n \n");}
-
-
-        for(i=0;i<n;i++){
-          visitedAdjMat[i]=0;
-        }
-
-        connectedComponentsGraphAdjMat(undir_graph);
-
         destroyGraphAdjMat(undir_graph);
 
 
@@ -331,38 +214,6 @@ int main()
         }
 
         displayIncMatGraph(undir_graph);
-
-        printf("\n \n- - - Busca em profundidade - - -\n \n");
-
-
-        while(1){
-          printf("\nQual vertices deseja inicia a busca ?\n--> ");
-          scanf("%d", &vet);
-          if (vet > - 1 && vet < n) {
-
-            int i;
-            for(i=0;i<n;i++){//Zera o vetor de visitado
-              visitedIncMat[i]=0;
-            }
-
-            DFSIncMat(undir_graph, vet, 0);
-            break;
-          }else{
-            printf("\n\nAletar: Numero invalido. \n\n");
-          }
-        }
-
-        if (checkConnectionGraphIncMat( undir_graph )){
-          printf("\n\nGrafo e conexo \n");
-        }else {printf("\n\nGrafo nao e conexo \n");}
-
-        int i;
-        for(i=0;i<n;i++){//Zera o vetor de visitado
-          visitedIncMat[i]=0;
-        }
-
-        connectedComponentsGraphIncMat(undir_graph);
-
         destroyGraphIncMat(undir_graph);
 
       }
@@ -400,7 +251,6 @@ int main()
     }
 
     displayGraphAdjList(dir_graph);
-
     destroyGraphAdjList(dir_graph);
 
   }else{// Parte do código para grafos direcionados
@@ -436,7 +286,6 @@ int main()
 
       displayMatrixGraph(dir_graph);
       destroyGraphAdjMat(dir_graph);
-      //GOTO: BUSCA EM PROFUNDIDADE
     }else{  //Não Direcionado e Matriz de Incidencia
         int sizeEdge = 0; //Um contador
         incmatgraph_p dir_graph;
@@ -773,172 +622,5 @@ void destroyGraphIncMat(incmatgraph_p graph){
       free(currentIntPtr);
   }
   free(graph);
-
-}
-/* - - -  FUNÇÕES ADICIONAIS PARA LISTA ADJACENCIA,
-          MATRIZ DE ADJACENCIA E MATRIZ DE INCIDENCIA  - - - */
-
-//Função para imprimir a lista de adjacência do grafo//
-void DFSAdjList(adjlistgraph_p graph, int i, int teamCC){
-  adjlist_node_p adjListPtr = graph->adjListArr[i].head;
-  printf("\nVertice visitado : %d \n",i);
-  cc_t.team_vertex[i] = teamCC;
-  visitedAdjList[i]=1;
-  while (adjListPtr!=NULL){
-    i = adjListPtr->vertex;
-    if(!visitedAdjList[i]){
-      DFSAdjList(graph, i, teamCC);
-      }
-      adjListPtr = adjListPtr->next;
-    }
-}
-
-//Busca em profundidade para matriz de adjacencia
-void DFSAdjMat(adjmatgraph_p graph, int i, int teamCC){
-  int j;
-  printf("\nVertice visitado : %d \n",i);
-  cc_t.team_vertex[i] = teamCC;
-  visitedAdjMat[i]=1;
-
-  for(j=0;j<graph->num_vertices;j++){
-     if(!visitedAdjMat[j] && graph->adj_matrix[i][j]==1){
-          DFSAdjMat(graph,j, teamCC);
-        }
-  }
-}
-
-void DFSIncMat(incmatgraph_p graph, int i, int teamCC){
-  int j,y,y1;
-  printf("\nVertice visitado : %d \n",i);
-  visitedIncMat[i]=1;
-  cc_t.team_vertex[i] = teamCC;
-  for (j = 0; j <  graph->sizeEdge; j++) {
-
-    y = graph->conjEdge[((2*j)+1)]; // N° Impar
-    y1 = graph->conjEdge[((2*j))]; // N° par
-
-    if (!visitedIncMat[y]  && graph->inc_matrix[i][j] == 1) {
-      DFSIncMat(graph, y, teamCC);
-    }
-
-    if (!visitedIncMat[y1]  && graph->inc_matrix[i][j] == 1) {
-        DFSIncMat(graph, y1, teamCC);
-    }
-  }
-
-}
-
-/* - - - FUNÇÕES PARA VERIFICAR AS CONEXOES DO GRAFO - - - */
-
-//Checando a conexão dos vertices//
-int checkConnectionGraphAdjList(adjlistgraph_p graph){
-  int i, bool;
-  for (i = 0; i < graph->num_vertices; i++){
-    if (visitedAdjList[i] == 1){
-      bool = 1;
-    }else {
-      bool = 0;
-    }
-  }
-  return bool;
-}
-
-//Checando a conexão dos vertices//
-int checkConnectionGraphAdjMat(adjmatgraph_p graph){
-  int i, bool;
-  for (i = 0; i < graph->num_vertices; i++){
-    if (visitedAdjMat[i] == 1){
-      bool = 1;
-    }else {
-      bool = 0;
-    }
-  }
-  return bool;
-}
-
-//Checando a conexão dos vertices para matriz de incidencia//
-int checkConnectionGraphIncMat(incmatgraph_p graph){
-  int i, bool;
-  for (i = 0; i < graph->num_vertices; i++){
-    if (visitedIncMat[i] == 1){
-      bool = 1;
-    }else {
-      bool = 0;
-    }
-  }
-  return bool;
-}
-
-//TODO: IMPLEMENTAND SEGUNDA da LISTA
-// Conta e encontra todas as componentes conexas de um grafo
-void connectedComponentsGraphAdjList(adjlistgraph_p graph){
-  int totalComponents=0;
-  for( int i = 0 ; i < graph->num_vertices ; ++i ){ //interação com todos os vertices
-    if(!visitedAdjList[i]){ // Se qualquer nó não foi visitado DFS chamar
-      printf("\n  Grupo ( %d ) de conexao do grafo: \n \n" , totalComponents);
-      DFSAdjList(graph, i, totalComponents);
-      totalComponents++; //incremento de número de componentes
-    }
-
-    }
-
-    cc_t.num_con = totalComponents; //Salva o valor em um struct
-
-    printf("\nO numero de componentes conexas do grafo: %d\n \n" , cc_t.num_con);
-
-    //for( int i = 0 ; i < graph->num_vertices ; i++ ){
-        //printf("Vertice: %d - Grupo: %d\n", i, cc_t.team_vertex[i]);
-      //}
-}
-
-void connectedComponentsGraphAdjMat(adjmatgraph_p graph){
-  int totalComponents=0;
-
-  for( int i = 0 ; i < graph->num_vertices ; ++i ){ //interação com todos os vertices
-    if(!visitedAdjMat[i]){ // Se qualquer nó não foi visitado DFS chamar
-      printf("\n  Grupo ( %d ) de conexao do grafo: \n \n" , totalComponents);
-      DFSAdjMat(graph, i, totalComponents);
-      totalComponents++; //incremento de número de componentes
-    }
-
-    }
-
-    cc_t.num_con = totalComponents; //Salva o valor em um struct
-
-    printf("\nO numero de componentes conexas do grafo: %d\n \n" , cc_t.num_con);
-
-    //for( int i = 0 ; i < graph->num_vertices ; i++ ){
-    //    printf("Vertice: %d - Grupo: %d\n", i, cc_t.team_vertex[i]);
-    //  }
-}
-
-void connectedComponentsGraphIncMat(incmatgraph_p graph){
-  int totalComponents=0;
-
-  for( int i = 0 ; i < graph->num_vertices ; ++i ){ //interação com todos os vertices
-    if(!visitedIncMat[i]){ // Se qualquer nó não foi visitado DFS chamar
-      printf("\n  Grupo ( %d ) de conexao do grafo: \n \n" , totalComponents);
-      DFSIncMat(graph, i, totalComponents);
-      totalComponents++; //incremento de número de componentes
-    }
-  }
-
-    cc_t.num_con = totalComponents; //Salva o valor em um struct
-
-    printf("\nO numero de componentes conexas do grafo: %d\n \n" , cc_t.num_con);
-
-    //for( int i = 0 ; i < graph->num_vertices ; i++ ){
-    //    printf("Vertice: %d - Grupo: %d\n", i, cc_t.team_vertex[i]);
-    //  }
-}
-
-
-void verifyGraph(adjlistgraph_p graph){
-      printf("\n - - - Terceira da Lista - - - \n \n");
-  if( graph->num_edges ==  graph->num_vertices*(graph->num_vertices-1)/2 )  {
-      printf("\n Grafo Completo \n \n");
-  }else{
-
-  }
 
 }
